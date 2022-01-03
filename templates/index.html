@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Title</title>
+  </head>
+  <body>
+    <button id="btn">get videos</button>
+    <script>
+      const ws = new WebSocket('ws://127.0.0.1:8000/get-videos/')
+      ws.onmessage = event => {
+        console.log(JSON.parse(event.data))
+      }
+
+      let count = 0
+
+      document.getElementById('btn').addEventListener('click', () => {
+        ws.send(
+          JSON.stringify({
+            last_video_id: count,
+          })
+        )
+        count++
+      })
+    </script>
+  </body>
+</html>
