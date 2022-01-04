@@ -15,7 +15,7 @@ async def login(body: RegistrationSchema):
     try:
         user = await User.objects.filter(username=body.username, password=get_hashed_password(body.password)).first()
 
-        return authenticate(user)
+        return {'username': user.username, **authenticate(user)}
     except NoMatch:
         raise HTTPException(401, 'No matches in users!')
 

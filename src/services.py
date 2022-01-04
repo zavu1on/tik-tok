@@ -2,6 +2,9 @@ import jwt
 from datetime import datetime, timedelta, timezone
 from hashlib import md5
 from typing import Callable, TypeVar, Generic
+
+from fastapi import HTTPException
+
 from src.models import User
 from src.settings import KEY, ALGORITHM, TOKEN_PREFIX
 
@@ -99,7 +102,10 @@ def authenticate(user: User) -> dict:
 
 
 def get_id_from_token(token: str) -> int:
-    return int(jwt.decode(token.split(TOKEN_PREFIX)[1], KEY, ALGORITHM, {'verify_exp': False, 'verify_signature': False})['id'])
+    data = jwt.decode(token.split(TOKEN_PREFIX)[1], KEY, ALGORITHM, {'verify_exp': False, 'verify_signature': False})
+    if data['type'] == 'refresh':
+        raise HTTPException(400, 'Access token expected!')
+    return int(data['id'])
 
 
 def parse_videos_to_json(video) -> dict:
